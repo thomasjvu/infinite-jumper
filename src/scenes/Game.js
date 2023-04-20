@@ -35,6 +35,7 @@ export default class Game extends Phaser.Scene {
         this.load.image("carrot", "assets/png/items/carrot.png");
 
         this.load.audio('jump', 'assets/sfx/phaseJump1.ogg')
+        this.load.audio('music', 'assets/music/field_theme_1.wav')
 
         this.cursors = this.input.keyboard.createCursorKeys();
     }
@@ -42,6 +43,12 @@ export default class Game extends Phaser.Scene {
     create() {
         // create background
         this.add.image(240, 320, "background").setScrollFactor(1, 0);
+
+        // start music
+        this.music = this.sound.add('music')
+        this.music.play({
+            loop: true
+        })
 
         // create 5 platforms
         this.platforms = this.physics.add.staticGroup();
@@ -139,7 +146,7 @@ export default class Game extends Phaser.Scene {
             this.sound.play('jump')
         }
 
-        // switbh back to jump when falling
+        // switch back to jump when falling
         const vy = this.player.body.velocity.y
         if (vy > 0 && this.player.texture.key !== 'bunny-stand') {
             this.player.setTexture('bunny-stand')
@@ -162,6 +169,7 @@ export default class Game extends Phaser.Scene {
         const bottomPlatform = this.findBottomMostPlatform()
 
         if (this.player.y > bottomPlatform.y + 200) {
+            this.music.stop()
             this.scene.start('game-over')
         }
     }
